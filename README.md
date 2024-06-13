@@ -59,7 +59,8 @@ It might be advisable to launch the script within a service
 something on the line with
 
 ```
-sudo cp fan.py usr/sbin/imacmodfan.py
+sudo cp fan.py /usr/sbin/imacmodfan.py
+sudo chmod +x /usr/sbin/imacmodfan.py
 sudo nano -w /etc/systemd/system/imacmodfan.service
 ```
 
@@ -83,7 +84,46 @@ RestartSec=5
 WantedBy=sysinit.target
 ```
 
-however the configuration is built in the script, so it's not
+
+Than start the script
+
+```
+sudo systemctl daemon-reload
+systemctl enable imacmodfan
+systemctl start imacmodfan
+```
+
+And possibly monito the thing
+
+```
+$ systemctl status imacmodfan
+● imacmodfan.service - A fan manager daemon for modified iMacs
+     Loaded: loaded (/etc/systemd/system/imacmodfan.service; disabled; preset: disabled)
+    Drop-In: /usr/lib/systemd/system/service.d
+             └─10-timeout-abort.conf
+     Active: active (running) since Thu 2024-06-13 23:13:57 CEST; 59s ago
+   Main PID: 46984 (python3)
+      Tasks: 2 (limit: 19066)
+     Memory: 28.7M (peak: 29.2M)
+        CPU: 199ms
+     CGroup: /system.slice/imacmodfan.service
+             ├─46984 python3 /usr/sbin/imacmodfan.py
+             └─46985 /usr/bin/nvidia-smi --format=csv --query-gpu=temperature.gpu -l 5
+
+Jun 13 23:14:37 imachome-lan imacmodfan.py[46984]: 06/13/2024 11:14:37 PM INFO:TC0H temperature changed from 47.0 to 47.0
+Jun 13 23:14:37 imachome-lan imacmodfan.py[46984]: 06/13/2024 11:14:37 PM INFO:Set fan CPU RPM to 940
+Jun 13 23:14:42 imachome-lan imacmodfan.py[46984]: 06/13/2024 11:14:42 PM INFO:TL0P temperature changed from 42.0 to 43.0
+Jun 13 23:14:42 imachome-lan imacmodfan.py[46984]: 06/13/2024 11:14:42 PM INFO:Set fan HDD RPM to 3168
+Jun 13 23:14:42 imachome-lan imacmodfan.py[46984]: 06/13/2024 11:14:42 PM INFO:TC0H temperature changed from 47.0 to 47.0
+Jun 13 23:14:42 imachome-lan imacmodfan.py[46984]: 06/13/2024 11:14:42 PM INFO:Set fan CPU RPM to 940
+Jun 13 23:14:47 imachome-lan imacmodfan.py[46984]: 06/13/2024 11:14:47 PM INFO:TC0H temperature changed from 47.0 to 48.0
+Jun 13 23:14:47 imachome-lan imacmodfan.py[46984]: 06/13/2024 11:14:47 PM INFO:Set fan CPU RPM to 940
+Jun 13 23:14:52 imachome-lan imacmodfan.py[46984]: 06/13/2024 11:14:52 PM INFO:NVGPU temperature changed from 66.0 to 65.0
+Jun 13 23:14:52 imachome-lan imacmodfan.py[46984]: 06/13/2024 11:14:52 PM INFO:Set fan ODD RPM to 2108
+```
+
+
+Remember, the configuration is built in the script, so it's not
 very elegant. But it could easily be modified to use a config file.
 
 
